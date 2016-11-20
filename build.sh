@@ -1,2 +1,2 @@
-gcc src/*.h src/*.cpp -o enigma
+g++ src/*.h src/*.cpp -o enigma.exe
 
