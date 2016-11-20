@@ -2,9 +2,10 @@
 	Class: wheel
 ****/
 
-#include "enigma.h"
 #include <stdlib.h>
-#include <mem.h>
+#include <string.h>
+
+#include "enigma.h"
 
 const int Wheel::WHEELSIZE = 256;
 

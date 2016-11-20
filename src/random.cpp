@@ -1,19 +1,19 @@
-
 #include <stdlib.h>
 #include <time.h>
-#include <enigma.h>
 #include <stdio.h>
 
-const unsigned char Random::NODUP = 0;
-const unsigned char Random::DUP = 1;
+#include "enigma.h"
+
+//const unsigned char Random::NODUP = 0;
+//const unsigned char Random::DUP = 1;
 bool Random::randomized = false;
 
 Random::Random()
 {
 	if(!randomized){
-		randomize();
-      randomized = true;
-   }
+		srand(time(NULL));
+		randomized = true;
+	}
 }
 
 /*** ch *************************************************************/
@@ -27,7 +27,7 @@ void Random::ch(unsigned char *list, unsigned char rep, unsigned long size)
 	   list[i] = (unsigned char)i;
 	 }
 	 for(i=size-1; i>0; i--){
-	   r=random(i);
+	   r=random()%i;
 	   temp=list[i];
 	   list[i]=list[r];
 	   list[r]=temp;
@@ -35,7 +35,7 @@ void Random::ch(unsigned char *list, unsigned char rep, unsigned long size)
    }
    else{
 	 for(i=0; i<size; i++){
-		list[i]=(unsigned char)random(256);
+		list[i]=(unsigned char)random()%Wheel::WHEELSIZE;
 	 }
    }
 }

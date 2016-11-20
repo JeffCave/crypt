@@ -1,17 +1,19 @@
-/********************************************************************
-/********************************************************************/
 
-/*** Random *********************************************************/
+
+/**
+ * 
+ * 
+ */
 class Random{
 	private:
-   	static bool randomized;
-   public:
-   	static const unsigned char NODUP;
-   	static const unsigned char DUP;
-      Random();
-      void ch(unsigned char *, unsigned char rep=1, unsigned long arraysize=1);
+		static bool randomized;
+	public:
+		static const unsigned char NODUP = 0;
+		static const unsigned char DUP = 1;
+		Random();
+		void ch(unsigned char *, unsigned char rep=1, unsigned long arraysize=1);
 };
-/*** Random *********************************************************/
+
 
 /*** Wheel **********************************************************/
 class Wheel{
@@ -56,26 +58,26 @@ class WheelSet{
 /*** Enigma *********************************************************/
 class Enigma{
 	private:
-   	unsigned char task;
-      WheelSet box;
-   	unsigned char filesrc[256];
-      unsigned char filedest[256];
-      unsigned char filekey[256];
-      unsigned char filewheelset[256];
-   public:
-   	static const int ENCRYPT;
-   	static const int DECRYPT;
-   	static const int GENKEY;
-   	static const int GENSET;
-      Enigma(int,char**);
-      void doTask();
-      void DisplayMenu();
-      void GetTask(char**);
-      void GetFiles();
-      void GetKey();
-      void GetWheelSet();
-      void Crypt(int);
-      void Encrypt();
-      void Decrypt();
+		unsigned char task;
+		WheelSet box;
+		unsigned char filesrc[256];
+		unsigned char filedest[256];
+		unsigned char filekey[256];
+		unsigned char filewheelset[256];
+	public:
+		static const int ENCRYPT;
+		static const int DECRYPT;
+		static const int GENKEY;
+		static const int GENSET;
+		Enigma(int,unsigned char**);
+		void doTask();
+		void DisplayMenu();
+		void GetTask(unsigned char**);
+		void GetFiles();
+		void GetKey();
+		void GetWheelSet();
+		void Crypt(int);
+		void Encrypt();
+		void Decrypt();
 };
 /*** Enigma *********************************************************/

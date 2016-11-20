@@ -1,12 +1,13 @@
 /********************************************************************
 /********************************************************************/
 
-#include "enigma.h"
 #include <stdio.h>
 #include <ctype.h>
-#include <conio.h>
+#include <ncurses.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include "enigma.h"
 
 /*** Constants ******************************************************/
 const int Enigma::ENCRYPT = 1;
@@ -15,52 +16,52 @@ const int Enigma::GENKEY  = 3;
 const int Enigma::GENSET  = 4;
 /*** Constants ******************************************************/
 
-Enigma::Enigma(int argcount, char* arguments[])
+Enigma::Enigma(int argcount, unsigned char* arguments[])
 {
 	if(argcount<2){
 		DisplayMenu();
-   }
-   else{
-   	GetTask(arguments);
-   }
+	}
+	else{
+		GetTask(arguments);
+	}
 }
 
 /*** GetTask ******************************************************************/
-void Enigma::GetTask(char* args[])
+void Enigma::GetTask(unsigned char* args[])
 {
-	if(strcmp(args[1],"/e")==0) task=ENCRYPT;
-	if(strcmp(args[1],"/d")==0) task=DECRYPT;
-	if(strcmp(args[1],"/k")==0) task=GENKEY;
-	if(strcmp(args[1],"/s")==0) task=GENSET;
-   switch(task){
-      case ENCRYPT:
-      	strcpy(filekey,args[2]);
-      	strcpy(filewheelset,args[3]);
-      	strcpy(filesrc,args[4]);
-      	strcpy(filedest,args[5]);
-         Encrypt();
-      break;
-   	case DECRYPT:
-      	strcpy(filekey,args[2]);
-      	strcpy(filewheelset,args[3]);
-      	strcpy(filesrc,args[4]);
-      	strcpy(filedest,args[5]);
-         Decrypt();
-      break;
-   	case GENKEY:
-      	strcpy(filekey,args[2]);
+	if(strcmp(args[1],(unsigned char*)"/e")==0) task=ENCRYPT;
+	if(strcmp(args[1],(unsigned char*)"/d")==0) task=DECRYPT;
+	if(strcmp(args[1],(unsigned char*)"/k")==0) task=GENKEY;
+	if(strcmp(args[1],(unsigned char*)"/s")==0) task=GENSET;
+	switch(task){
+		case ENCRYPT:
+			strcpy(filekey,args[2]);
+			strcpy(filewheelset,args[3]);
+			strcpy(filesrc,args[4]);
+			strcpy(filedest,args[5]);
+			Encrypt();
+			break;
+		case DECRYPT:
+			strcpy(filekey,args[2]);
+			strcpy(filewheelset,args[3]);
+			strcpy(filesrc,args[4]);
+			strcpy(filedest,args[5]);
+			Decrypt();
+			break;
+		case GENKEY:
+			strcpy(filekey,args[2]);
 			box.GenKey(filekey);
-      break;
-   	case GENSET:
-      	strcpy(filewheelset,args[2]);
+			break;
+		case GENSET:
+			strcpy(filewheelset,args[2]);
 			box.GenWheels(filewheelset);
-      break;
-      default:
-         printf("ERROR: improper usage\n");
-         printf("Usage: %s /[task] filename [filename ...]",args[0]);
-         exit(1);
-      break;
-   }
+			break;
+		default:
+			printf("ERROR: improper usage\n");
+			printf("Usage: %s /[task] filename [filename ...]",args[0]);
+			exit(1);
+			break;
+	}
 }
 /*** GetTask ********************************************************/
 
@@ -92,30 +93,34 @@ void Enigma::GetWheelSet()
 	scanf("%s", filewheelset);
 	fflush(stdin);
 }
-/*** GetWheelSet ****************************************************/
+
 
 /*** DisplayMenu ****************************************************/
 void Enigma::DisplayMenu()
 {
+	
+	
+	initscr();			/* Start curses mode 		*/
+	
 	int choice=0;
 	while (choice!=5){
-		clrscr();
-		printf("Please Select Task:\n");
-		printf("  1. Encrypt File\n");
-		printf("  2. Decrypt File\n");
-		printf("  3. Generate a Key \n");
-		printf("  4. Generate a Wheelset\n");
-		printf("  5. Quit\n");
-		gotoxy(21,1);
-		choice = getche()-'0';
-		clrscr();
+		erase();
+		
+		printw("Please Select Task:\n");
+		printw("  1. Encrypt File\n");
+		printw("  2. Decrypt File\n");
+		printw("  3. Generate a Key \n");
+		printw("  4. Generate a Wheelset\n");
+		printw("  5. Quit\n");
+		move(21,1);
+		choice = getch()-'0';
+		erase();
 		switch(choice){
 			case 1:	// this will be option '\e'
 				GetKey();
 				GetWheelSet();
 				GetFiles();
 				Encrypt();
-				getch();
 			break;
 			case 2:	// this will be option '\d'
 				GetKey();
@@ -127,15 +132,15 @@ void Enigma::DisplayMenu()
 			case 3:	// this will be option '\k'
 				GetKey();
 				box.GenKey(filekey);
-				printf("\nKey '%s' Generated",filekey);
-				printf("\nPress any key to continue");
+				printw("\nKey '%s' Generated",filekey);
+				printw("\nPress any key to continue");
 				getch();
 			break;
 			case 4:	// this will be option '\s'
 				GetWheelSet();
 				box.GenWheels(filewheelset);
-				printf("\nWheelset '%s' Generated",filewheelset);
-				printf("\nPress any key to continue: ");
+				printw("\nWheelset '%s' Generated",filewheelset);
+				printw("\nPress any key to continue: ");
 				getch();
 			break;
 			case 5:
@@ -143,30 +148,31 @@ void Enigma::DisplayMenu()
 			break;
       }
    }
+	endwin();			/* End curses mode		  */
 }
 /*** doTask *******************************************************************/
 
 /*** Crypt **********************************************************/
 void Enigma::Crypt(int decrypt)
 {
-	FILE *src,
-        *dest;
+	FILE *src;
+	FILE *dest;
 	char data;
-   int i;
+	int i;
 
 	box.LoadWheels(filewheelset);
 	box.LoadKey(filekey);
 	src = fopen(filesrc,"rb");
 	dest = fopen(filedest,"wb");
-   i=0;
-   printf("\n");
+	i=0;
+	printf("\n");
 	while(1==fread(&data,1,1,src)){
-   	i++;
+		i++;
 		data = box.Crypt(data,decrypt);
-      fwrite(&data,1,1,dest);
-      printf("\r%i bytes %scrypted",i,(decrypt?"de":"en"));
+		fwrite(&data,1,1,dest);
+		printf("\r%i bytes %scrypted",i,(decrypt?"de":"en"));
 	}
-   printf("\rFile %scrypted.                      ",(decrypt?"de":"en"));
+	printf("\rFile %scrypted.                      ",(decrypt?"de":"en"));
 	fclose(src);
 	fclose(dest);
 }

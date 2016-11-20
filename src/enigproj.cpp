@@ -1,6 +1,7 @@
-#include <enigma.h>
+#include "enigma.h"
 
-void main(int argc, char* args[])
+int main(int argc, char* args[])
 {
 	Enigma op(argc, args);
+	return 0;
 }
