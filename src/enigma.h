@@ -18,40 +18,40 @@ class Random{
 /*** Wheel **********************************************************/
 class Wheel{
 	private:
-   	unsigned char* list;
-      int timesused;
-      unsigned char startpos;
-   public:
-   	static const int WHEELSIZE;
-      Wheel();
-      void GenWheel();
-      void LoadWheel(unsigned char *);
-      void GetWheel(unsigned char *);
-      unsigned char goingIn(unsigned char);
-      unsigned char goingOut(unsigned char);
-      int Turn();
-      void SetStart(int pos);
+		unsigned char* list;
+		int timesused;
+		unsigned char startpos;
+	public:
+		static const int WHEELSIZE;
+		Wheel();
+		void GenWheel();
+		void LoadWheel(unsigned char *);
+		void GetWheel(unsigned char *);
+		unsigned char goingIn(unsigned char);
+		unsigned char goingOut(unsigned char);
+		int Turn();
+		void SetStart(int pos);
 };
 /*** Wheel **********************************************************/
 
 /*** WheelSet *******************************************************/
 class WheelSet{
 	private:
-   	Wheel *wheels;
-      unsigned char *wheelorder;
-      Wheel *backboard;
-   public:
-   	static const int TOTWHEELS;
-      WheelSet();
-      ~WheelSet();
-      void GenWheels(unsigned char *path);
-      void LoadWheels(unsigned char *path);
-      void SaveWheels(unsigned char *path);
-      unsigned char Crypt(unsigned char, int);
-      void LoadKey(unsigned char *path);
-      void GenKey (unsigned char *path);
-      void GenWheelOrder(unsigned char *);
-      void SetWheelOrder(unsigned char *);
+		Wheel *wheels;
+		unsigned char *wheelorder;
+		Wheel *backboard;
+	public:
+		static const int TOTWHEELS;
+		WheelSet();
+		~WheelSet();
+		void GenWheels(unsigned char *path);
+		void LoadWheels(unsigned char *path);
+		void SaveWheels(unsigned char *path);
+		unsigned char Crypt(unsigned char, int);
+		void LoadKey(unsigned char *path);
+		void GenKey (unsigned char *path);
+		void GenWheelOrder(unsigned char *);
+		void SetWheelOrder(unsigned char *);
 };
 /*** WheelSet *******************************************************/
 
