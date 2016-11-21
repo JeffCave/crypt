@@ -2,9 +2,12 @@
 	Class: WheelSet
 ***/
 
-#include "enigma.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <fstream>
+#include <iostream>
+
+#include "enigma.h"
 
 const int WheelSet::TOTWHEELS = 128;
 
@@ -22,7 +25,7 @@ WheelSet::~WheelSet()
 /*** WheelSet *******************************************************/
 
 /*** LoadWheels *****************************************************/
-void WheelSet::LoadWheels(unsigned char *path)
+void WheelSet::LoadWheels(char *path)
 {
 	unsigned char temp[256];
 	FILE *file;
@@ -43,10 +46,10 @@ void WheelSet::LoadWheels(unsigned char *path)
 /*** LoadWheels *****************************************************/
 
 /*** LoadKey ********************************************************/
-void WheelSet::LoadKey(unsigned char *path)
+void WheelSet::LoadKey(char *path)
 {
 	FILE *src;
-	unsigned char* key = new char[TOTWHEELS];
+	unsigned char* key = new unsigned char[TOTWHEELS];
 	int i;
 	Random rand;
 	
@@ -57,13 +60,13 @@ void WheelSet::LoadKey(unsigned char *path)
 	fclose(src);
 	for(i=0; i<TOTWHEELS; i++){
 		wheels[i].SetStart(key[i]);
-      printf("\rWheel %i of %i initialized (%.2f)...",i,TOTWHEELS,100.0*i/TOTWHEELS);
+		printf("\rWheel %i of %i initialized (%.2f)...",i,TOTWHEELS,100.0*i/TOTWHEELS);
 	}
 }
 /*** LoadKey ********************************************************/
 
 /*** GenWheels ******************************************************/
-void WheelSet::GenWheels(unsigned char *path)
+void WheelSet::GenWheels(char *path)
 {
 	unsigned char temp[256];
 	int i;
@@ -86,21 +89,23 @@ void WheelSet::GenWheels(unsigned char *path)
 /*** GenWheels ******************************************************/
 
 /*** GenKey *********************************************************/
-void WheelSet::GenKey(unsigned char *path)
+void WheelSet::GenKey(char *path)
 {
-	FILE *dest;
-	unsigned char key[256];
+	std::ofstream file; 
 	Random rand;
+	unsigned char key[256];
 
-	printf("Generating key...");
+	printf("Generating key...\n");
 	rand.ch(key,rand.DUP,TOTWHEELS);
 	rand.ch(wheelorder,rand.NODUP,TOTWHEELS);
-	printf("Writing key to file...");
-	dest = fopen(path,"wb");
-	fwrite(key,TOTWHEELS,1,dest);
-	fwrite(wheelorder,TOTWHEELS,1,dest);
-	fclose(dest);
-	printf("Key Written.");
+	
+	printf("Writing key to file...\n");
+	file.open(path,std::ios::out | std::ios::binary);
+	file.write((char *)key,TOTWHEELS);
+	file.write((char *)wheelorder,TOTWHEELS);
+	file.close();
+	
+	printf("Key Written.\n");
 }
 /*** GenKey *********************************************************/
 

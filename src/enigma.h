@@ -37,19 +37,19 @@ class Wheel{
 /*** WheelSet *******************************************************/
 class WheelSet{
 	private:
-		Wheel *wheels;
-		unsigned char *wheelorder;
+		Wheel* wheels;
+		unsigned char * wheelorder;
 		Wheel *backboard;
 	public:
 		static const int TOTWHEELS;
 		WheelSet();
 		~WheelSet();
-		void GenWheels(unsigned char *path);
-		void LoadWheels(unsigned char *path);
-		void SaveWheels(unsigned char *path);
+		void GenWheels(char *path);
+		void LoadWheels(char *path);
+		void SaveWheels(char *path);
 		unsigned char Crypt(unsigned char, int);
-		void LoadKey(unsigned char *path);
-		void GenKey (unsigned char *path);
+		void LoadKey(char *path);
+		void GenKey (char *path);
 		void GenWheelOrder(unsigned char *);
 		void SetWheelOrder(unsigned char *);
 };
@@ -60,19 +60,19 @@ class Enigma{
 	private:
 		unsigned char task;
 		WheelSet box;
-		unsigned char filesrc[256];
-		unsigned char filedest[256];
-		unsigned char filekey[256];
-		unsigned char filewheelset[256];
+		char filesrc[256];
+		char filedest[256];
+		char filekey[256];
+		char filewheelset[256];
 	public:
 		static const int ENCRYPT;
 		static const int DECRYPT;
 		static const int GENKEY;
 		static const int GENSET;
-		Enigma(int,unsigned char**);
+		Enigma(int, char**);
 		void doTask();
 		void DisplayMenu();
-		void GetTask(unsigned char**);
+		void GetTask(char**);
 		void GetFiles();
 		void GetKey();
 		void GetWheelSet();

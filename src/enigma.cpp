@@ -16,7 +16,7 @@ const int Enigma::GENKEY  = 3;
 const int Enigma::GENSET  = 4;
 /*** Constants ******************************************************/
 
-Enigma::Enigma(int argcount, unsigned char* arguments[])
+Enigma::Enigma(int argcount, char* arguments[])
 {
 	if(argcount<2){
 		DisplayMenu();
@@ -27,12 +27,12 @@ Enigma::Enigma(int argcount, unsigned char* arguments[])
 }
 
 /*** GetTask ******************************************************************/
-void Enigma::GetTask(unsigned char* args[])
+void Enigma::GetTask(char* args[])
 {
-	if(strcmp(args[1],(unsigned char*)"/e")==0) task=ENCRYPT;
-	if(strcmp(args[1],(unsigned char*)"/d")==0) task=DECRYPT;
-	if(strcmp(args[1],(unsigned char*)"/k")==0) task=GENKEY;
-	if(strcmp(args[1],(unsigned char*)"/s")==0) task=GENSET;
+	if(strcmp(args[1],"/e")==0) task=ENCRYPT;
+	if(strcmp(args[1],"/d")==0) task=DECRYPT;
+	if(strcmp(args[1],"/k")==0) task=GENKEY;
+	if(strcmp(args[1],"/s")==0) task=GENSET;
 	switch(task){
 		case ENCRYPT:
 			strcpy(filekey,args[2]);
