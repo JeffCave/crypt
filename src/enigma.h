@@ -65,10 +65,12 @@ class Enigma{
 		char filekey[256];
 		char filewheelset[256];
 	public:
-		static const int ENCRYPT;
-		static const int DECRYPT;
-		static const int GENKEY;
-		static const int GENSET;
+		enum Task {
+			ENCRYPT = 1,
+			DECRYPT = 2,
+			GENKEY  = 3,
+			GENSET  = 4
+		};
 		Enigma(int, char**);
 		void doTask();
 		void DisplayMenu();

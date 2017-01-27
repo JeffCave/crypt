@@ -1,6 +1,3 @@
-/********************************************************************
-/********************************************************************/
-
 #include <stdio.h>
 #include <ctype.h>
 #include <ncurses.h>
@@ -9,13 +6,11 @@
 
 #include "enigma.h"
 
-/*** Constants ******************************************************/
-const int Enigma::ENCRYPT = 1;
-const int Enigma::DECRYPT = 2;
-const int Enigma::GENKEY  = 3;
-const int Enigma::GENSET  = 4;
-/*** Constants ******************************************************/
 
+
+/**
+ * Constructor - basically a main application
+ */
 Enigma::Enigma(int argcount, char* arguments[])
 {
 	if(argcount<2){
@@ -26,7 +21,10 @@ Enigma::Enigma(int argcount, char* arguments[])
 	}
 }
 
-/*** GetTask ******************************************************************/
+/**
+ * parses the command line for the task to be performed
+ * 
+ */
 void Enigma::GetTask(char* args[])
 {
 	if(strcmp(args[1],"/e")==0) task=ENCRYPT;
@@ -63,35 +61,34 @@ void Enigma::GetTask(char* args[])
 			break;
 	}
 }
-/*** GetTask ********************************************************/
+
 
 /*** GetFiles *******************************************************/
 void Enigma::GetFiles()
 {
-	printf("Enter source file: ");
-	scanf("%s", filesrc);
-	fflush(stdin);
-	printf("Enter destination file: ");
-	scanf("%s",filedest);
-	fflush(stdin);
+	erase();
+	printw("Enter source file: ");
+	getstr(filesrc);
+	printw("Enter destination file: ");
+	getstr(filedest);
 }
 /*** GetFiles *******************************************************/
 
 /*** GetKey *********************************************************/
 void Enigma::GetKey()
 {
-	printf("Enter 'Key' file: ");
-	scanf("%s", filekey);
-	fflush(stdin);
+	erase();
+	printw("Enter 'Key' file: ");
+	getstr(filekey);
 }
 /*** GetKey *********************************************************/
 
 /*** GetWheelSet ****************************************************/
 void Enigma::GetWheelSet()
 {
-	printf("\nEnter 'Wheelset' file: ");
-	scanf("%s", filewheelset);
-	fflush(stdin);
+	erase();
+	printw("\nEnter 'Wheelset' file: ");
+	getstr(filewheelset);
 }
 
 
@@ -113,7 +110,9 @@ void Enigma::DisplayMenu()
 		printw("  4. Generate a Wheelset\n");
 		printw("  5. Quit\n");
 		move(21,1);
+		noecho();
 		choice = getch()-'0';
+		echo();
 		erase();
 		switch(choice){
 			case 1:	// this will be option '\e'

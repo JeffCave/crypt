@@ -16,7 +16,9 @@ Random::Random()
 	}
 }
 
-/*** ch *************************************************************/
+/**
+ * Populates a list with random values
+ */
 void Random::ch(unsigned char *list, unsigned char rep, unsigned long size)
 {
 	unsigned int i,r;
@@ -39,4 +41,3 @@ void Random::ch(unsigned char *list, unsigned char rep, unsigned long size)
 		}
 	}
 }
-/*** ch *************************************************************/
