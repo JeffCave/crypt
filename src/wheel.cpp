@@ -70,18 +70,15 @@ unsigned char Wheel::goingOut(byte val)
 }
 
 
-/*** Turn ***********************************************************/
+/**
+ * 
+ */
 int Wheel::Turn()
 {
-	byte temp;  //temp holding space for first value in array
-	int i;      //index for array
-
 	//store first value in array
-	temp = list[0];
+	byte temp = list[0];
 	//bubble everything one space down
-	for(i=0; i<WHEELSIZE-1 ;i++){
-		list[i] = list[i+1];
-	}
+	memcpy(&list[0],&list[1],WHEELSIZE-1);
 	//put the stored value at the end
 	list[WHEELSIZE-1] = temp;
 	//adjust counter to reflect the new position
@@ -91,7 +88,7 @@ int Wheel::Turn()
 	//whether wheel has been through one revolution
 	return(timesused==0);
 }
-/*** Turn ***********************************************************/
+
 
 /*** StartPos *******************************************************/
 void Wheel::SetStart(int pos)
