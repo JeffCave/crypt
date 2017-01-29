@@ -38,6 +38,11 @@ void Wheel::setWheel(vector<byte> newwheel)
 {
 	list = newwheel;
 	timesused = 0;
+	
+	listOut.resize(list.size());
+	for(auto i=0; i<list.size(); i++){
+		listOut[list[i]] = i;
+	}
 }
 
 
@@ -53,7 +58,7 @@ void Wheel::getWheel(byte* outwheel)
 /**
  * 
  */
-unsigned char Wheel::goingIn(byte val)
+byte Wheel::goingIn(byte val)
 {
 	return(list[val]);
 }
@@ -62,11 +67,9 @@ unsigned char Wheel::goingIn(byte val)
 /**
  * 
  */
-unsigned char Wheel::goingOut(byte val)
+byte Wheel::goingOut(byte val)
 {
-	int i;
-	for(i=0; list[i]!=val; i++);
-	return((unsigned char) i);
+	return listOut[val];
 }
 
 
@@ -75,22 +78,23 @@ unsigned char Wheel::goingOut(byte val)
  */
 int Wheel::Turn()
 {
-
 	// store first value in array
 	byte temp = list[0];
 	// bubble everything one space down
-	//byte buffer[WHEELSIZE];
-	//memmove(&list[0],&list[1],WHEELSIZE-1);
-	// interestingly there does not seem to be any performance improvement 
-	// over just looping the array
 	for(int i=0; i<WHEELSIZE-1 ;i++){
 		list[i] = list[i+1];
 	}
 	//put the stored value at the end
 	list[WHEELSIZE-1] = temp;
-	//adjust for WHEELSIZE
+	
+	// once recalculate the reverse
+	listOut.resize(list.size());
+	for(auto i=0; i<list.size(); i++){
+		listOut[list[i]] = (byte)i;
+	}
+	
+	// whether wheel has been through one revolution
 	++timesused %= WHEELSIZE;
-	//whether wheel has been through one revolution
 	return(timesused==0);
 }
 

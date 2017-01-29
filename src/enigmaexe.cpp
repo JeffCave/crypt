@@ -65,7 +65,7 @@ void EnigmaExe::GetTask(char* args[])
 			enigma.GenerateKey();
 			break;
 		case GENSET:
-			enigma.filekey = args[2];
+			enigma.filewheelset = args[2];
 			enigma.GenerateWheelSet();
 			break;
 		default:

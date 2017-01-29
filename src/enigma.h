@@ -7,7 +7,6 @@ typedef unsigned char byte;
 
 /**
  * 
- * 
  */
 class Random{
 	private:
@@ -21,12 +20,15 @@ class Random{
 };
 
 
-/*** Wheel **********************************************************/
+/**
+ * 
+ */
 class Wheel{
 	protected:
 		vector<unsigned char> list;
+		vector<unsigned char> listOut;
 		int timesused;
-		unsigned char startpos;
+		byte startpos;
 	public:
 		static const int WHEELSIZE;
 		Wheel();
@@ -39,9 +41,11 @@ class Wheel{
 		int Turn();
 		void SetStart(int pos);
 };
-/*** Wheel **********************************************************/
 
-/*** WheelSet *******************************************************/
+
+/**
+ * 
+ */
 class WheelSet{
 	private:
 		vector<Wheel> wheels;
@@ -60,7 +64,7 @@ class WheelSet{
 		void GenWheelOrder(unsigned char *);
 		void SetWheelOrder(unsigned char *);
 };
-/*** WheelSet *******************************************************/
+
 
 /**
  * 
