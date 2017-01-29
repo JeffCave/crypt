@@ -11,7 +11,6 @@
 
 const int WheelSet::TOTWHEELS = 128;
 
-/*** WheelSet *******************************************************/
 WheelSet::WheelSet()
 {
 	wheels = new Wheel[TOTWHEELS];
@@ -21,90 +20,104 @@ WheelSet::WheelSet()
 WheelSet::~WheelSet()
 {
 	delete wheels;
+	delete wheelorder;
+	delete backboard;
 }
-/*** WheelSet *******************************************************/
 
 /*** LoadWheels *****************************************************/
-void WheelSet::LoadWheels(char *path)
+void WheelSet::LoadWheels(string& path)
 {
-	unsigned char temp[256];
-	FILE *file;
-	file = fopen(path,"rb");
-	if(file==NULL){
-		printf("ERROR: file '%s' could not be opened.",path);
+	vector<byte> temp;
+	temp.resize(256);
+	temp.reserve(256);
+
+
+	std::ifstream file(path.c_str(), std::ifstream::binary);
+	if(!file){
+		printf("ERROR: file '%s' could not be opened.",path.c_str());
 		exit(1);
 	}
 	for(int i=0; i<TOTWHEELS; i++){
-		fread(temp, Wheel::WHEELSIZE, 1, file);
-		wheels[i].LoadWheel(temp);
+		file.read((char *)&temp[0], Wheel::WHEELSIZE);
+		wheels[i].setWheel(temp);
 		printf("\rWheel %i of %i imported (%f)",i+1,TOTWHEELS,1.0*i/TOTWHEELS);
 	}
-	fread(temp, Wheel::WHEELSIZE, 1, file);
-	backboard->LoadWheel(temp);
-	fclose(file);
-}
-/*** LoadWheels *****************************************************/
+	
+	file.read((char *)&temp[0], Wheel::WHEELSIZE);
+	backboard->setWheel(temp);
+	
+	file.close();
 
-/*** LoadKey ********************************************************/
-void WheelSet::LoadKey(char *path)
+}
+
+
+/**
+ * 
+ */
+void WheelSet::LoadKey(string& path)
 {
-	FILE *src;
 	unsigned char* key = new unsigned char[TOTWHEELS];
 	int i;
 	Random rand;
+
+	ifstream src(path.c_str(), ifstream::binary);
+	src.read((char *)key,TOTWHEELS);
+	cout << "\nSetting Wheel Order...\n";
+	src.read((char *)wheelorder,TOTWHEELS);
+	src.close();
 	
-	src = fopen(path,"rb");
-	fread(key,TOTWHEELS,1,src);
-	printf("\nSetting Wheel Order...\n");
-	fread(wheelorder,TOTWHEELS,1,src);
-	fclose(src);
+	
 	for(i=0; i<TOTWHEELS; i++){
 		wheels[i].SetStart(key[i]);
 		printf("\rWheel %i of %i initialized (%.2f)...",i,TOTWHEELS,100.0*i/TOTWHEELS);
 	}
 }
-/*** LoadKey ********************************************************/
 
-/*** GenWheels ******************************************************/
-void WheelSet::GenWheels(char *path)
+
+
+/**
+ * 
+ */
+void WheelSet::GenWheels(string path)
 {
 	unsigned char temp[256];
 	int i;
 	Wheel buildwheel;
 	FILE *file;
-	file = fopen(path,"wb");
+	file = fopen(path.c_str(),"wb");
 	printf("\n");
 	for(i=0; i<TOTWHEELS; i++){
 		printf("\rGenerating Wheel %i of %i (%.2f)",i,TOTWHEELS,100.0*i/TOTWHEELS);
 		buildwheel.GenWheel();
-		buildwheel.GetWheel(temp);
+		buildwheel.getWheel(temp);
 		fwrite(temp, Wheel::WHEELSIZE, 1, file);
 	}
 	printf("\r%.2f",100.0*i/TOTWHEELS);
 	backboard->GenWheel();
-	backboard->GetWheel(temp);
+	backboard->getWheel(temp);
 	fwrite(temp, Wheel::WHEELSIZE, 1, file);
 	fclose(file);
 }
-/*** GenWheels ******************************************************/
+
+
 
 /*** GenKey *********************************************************/
-void WheelSet::GenKey(char *path)
+void WheelSet::GenKey(string path)
 {
-	std::ofstream file; 
+	std::ofstream file;
 	Random rand;
 	unsigned char key[256];
 
 	printf("Generating key...\n");
 	rand.ch(key,rand.DUP,TOTWHEELS);
 	rand.ch(wheelorder,rand.NODUP,TOTWHEELS);
-	
+
 	printf("Writing key to file...\n");
-	file.open(path,std::ios::out | std::ios::binary);
+	file.open(path.c_str(),std::ios::out | std::ios::binary);
 	file.write((char *)key,TOTWHEELS);
 	file.write((char *)wheelorder,TOTWHEELS);
 	file.close();
-	
+
 	printf("Key Written.\n");
 }
 /*** GenKey *********************************************************/
@@ -137,5 +150,5 @@ unsigned char WheelSet::Crypt(unsigned char value,int decrypt)
 	//sends back the new value
 	return(value);
 }
-/*** crypt **********************************************************/
+
 

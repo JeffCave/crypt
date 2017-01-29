@@ -9,59 +9,71 @@
 
 const int Wheel::WHEELSIZE = 256;
 
-/*** Constructor ****************************************************/
+
 Wheel::Wheel()
 {
-	list = new unsigned char[WHEELSIZE];
+	list.resize(WHEELSIZE);
 }
-/*** Constructor ****************************************************/
 
-/*** GenWheel *******************************************************/
+Wheel::~Wheel()
+{
+}
+
+
+/**
+ * 
+ */
 void Wheel::GenWheel()
 {
 	Random rand;
-	rand.ch(list,rand.NODUP,WHEELSIZE);
-	timesused=0;
-}
-/*** GenWheel *******************************************************/
-
-/*** LoadWheel ******************************************************/
-void Wheel::LoadWheel(unsigned char newwheel[])
-{
-	//validate that array is valid wheel
-	//move new wheel values in
-	memcpy(list, newwheel, WHEELSIZE);
+	rand.ch(&list[0],rand.NODUP,WHEELSIZE);
 	timesused = 0;
 }
-/*** LoadWheel ******************************************************/
 
-/*** GetWheel *******************************************************/
-void Wheel::GetWheel(unsigned char *outwheel)
+
+/**
+ * 
+ */
+void Wheel::setWheel(vector<byte> newwheel)
 {
-	memcpy(outwheel,list,WHEELSIZE);
+	list = newwheel;
+	timesused = 0;
 }
-/*** GetWheel *******************************************************/
 
-/*** goingIn ********************************************************/
-unsigned char Wheel::goingIn(unsigned char val)
+
+/**
+ * 
+ */
+void Wheel::getWheel(byte* outwheel)
+{
+	memcpy(outwheel,&list[0],WHEELSIZE);
+}
+
+
+/**
+ * 
+ */
+unsigned char Wheel::goingIn(byte val)
 {
 	return(list[val]);
 }
-/*** goingIn ********************************************************/
 
-/*** goingOut *******************************************************/
-unsigned char Wheel::goingOut(unsigned char val)
+
+/**
+ * 
+ */
+unsigned char Wheel::goingOut(byte val)
 {
 	int i;
 	for(i=0; list[i]!=val; i++);
 	return((unsigned char) i);
 }
-/*** goingOut *******************************************************/
+
 
 /*** Turn ***********************************************************/
 int Wheel::Turn()
 {
-	unsigned char temp;  //temp holding space for first value in array
+	byte temp;  //temp holding space for first value in array
 	int i;      //index for array
 
 	//store first value in array

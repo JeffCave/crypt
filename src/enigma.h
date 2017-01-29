@@ -1,4 +1,9 @@
+#include <string>
+#include <vector>
 
+using namespace std;
+
+typedef unsigned char byte;
 
 /**
  * 
@@ -17,16 +22,17 @@ class Random{
 
 /*** Wheel **********************************************************/
 class Wheel{
-	private:
-		unsigned char* list;
+	protected:
+		vector<unsigned char> list;
 		int timesused;
 		unsigned char startpos;
 	public:
 		static const int WHEELSIZE;
 		Wheel();
+		~Wheel();
 		void GenWheel();
-		void LoadWheel(unsigned char *);
-		void GetWheel(unsigned char *);
+		void setWheel(vector<byte>);
+		void getWheel(unsigned char *);
 		unsigned char goingIn(unsigned char);
 		unsigned char goingOut(unsigned char);
 		int Turn();
@@ -44,42 +50,64 @@ class WheelSet{
 		static const int TOTWHEELS;
 		WheelSet();
 		~WheelSet();
-		void GenWheels(char *path);
-		void LoadWheels(char *path);
+		void GenWheels(string path);
+		void LoadWheels(string&);
 		void SaveWheels(char *path);
 		unsigned char Crypt(unsigned char, int);
-		void LoadKey(char *path);
-		void GenKey (char *path);
+		void LoadKey(string& path);
+		void GenKey (string path);
 		void GenWheelOrder(unsigned char *);
 		void SetWheelOrder(unsigned char *);
 };
 /*** WheelSet *******************************************************/
 
-/*** Enigma *********************************************************/
+/**
+ * 
+ */
 class Enigma{
+	public: enum Action{
+		actEncrypt = 0,
+		actDecrypt = 1
+	};
 	private:
-		unsigned char task;
 		WheelSet box;
-		char filesrc[256];
-		char filedest[256];
-		char filekey[256];
-		char filewheelset[256];
 	public:
-		enum Task {
+		string filesrc;
+		string filedest;
+		string filekey;
+		string filewheelset;
+		Enigma();
+		~Enigma();
+		bool Crypt(Action);
+		bool Encrypt();
+		bool Decrypt();
+		void GenerateKey();
+		void GenerateWheelSet();
+};
+
+/**
+ * Executable Interface for the enigma
+ */
+class EnigmaExe{
+	public: enum Task {
 			ENCRYPT = 1,
 			DECRYPT = 2,
 			GENKEY  = 3,
-			GENSET  = 4
+			GENSET  = 4,
+			QUIT    = 5
 		};
-		Enigma(int, char**);
-		void doTask();
+	private:
+		Task task;
+		Enigma enigma;
+		string getStr();
+		
+	public:
+		EnigmaExe(int, char**);
+		~EnigmaExe();
 		void DisplayMenu();
 		void GetTask(char**);
 		void GetFiles();
 		void GetKey();
 		void GetWheelSet();
-		void Crypt(int);
-		void Encrypt();
-		void Decrypt();
 };
-/*** Enigma *********************************************************/
+
