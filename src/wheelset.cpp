@@ -1,11 +1,8 @@
-/***
-	Class: WheelSet
-***/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 #include "enigma.h"
 
@@ -13,18 +10,19 @@ const int WheelSet::TOTWHEELS = 128;
 
 WheelSet::WheelSet()
 {
-	wheels = new Wheel[TOTWHEELS];
-	wheelorder = new unsigned char[TOTWHEELS];
-	backboard = new Wheel;
-}
-WheelSet::~WheelSet()
-{
-	delete wheels;
-	delete wheelorder;
-	delete backboard;
+	wheels.resize(TOTWHEELS);
+	wheelorder.assign(TOTWHEELS,0);
 }
 
-/*** LoadWheels *****************************************************/
+
+WheelSet::~WheelSet()
+{
+}
+
+
+/**
+ * 
+ */
 void WheelSet::LoadWheels(string& path)
 {
 	vector<byte> temp;
@@ -44,7 +42,7 @@ void WheelSet::LoadWheels(string& path)
 	}
 	
 	file.read((char *)&temp[0], Wheel::WHEELSIZE);
-	backboard->setWheel(temp);
+	backboard.setWheel(temp);
 	
 	file.close();
 
@@ -56,21 +54,24 @@ void WheelSet::LoadWheels(string& path)
  */
 void WheelSet::LoadKey(string& path)
 {
-	unsigned char* key = new unsigned char[TOTWHEELS];
+	byte key[TOTWHEELS];
+	byte buffer[TOTWHEELS];
 	int i;
 	Random rand;
 
 	ifstream src(path.c_str(), ifstream::binary);
 	src.read((char *)key,TOTWHEELS);
-	cout << "\nSetting Wheel Order...\n";
-	src.read((char *)wheelorder,TOTWHEELS);
+	cout << "\nSetting Wheel Order...\r";
+	src.read((char *)&wheelorder[0],TOTWHEELS);
 	src.close();
 	
 	
+	cout << "\nSetting Start position...\r";
 	for(i=0; i<TOTWHEELS; i++){
 		wheels[i].SetStart(key[i]);
-		printf("\rWheel %i of %i initialized (%.2f)...",i,TOTWHEELS,100.0*i/TOTWHEELS);
+		printf("Wheel %i of %i rotated (%.2f)...\r",i+1,TOTWHEELS,100.0*i/TOTWHEELS);
 	}
+	printf("\n");
 }
 
 
@@ -80,23 +81,22 @@ void WheelSet::LoadKey(string& path)
  */
 void WheelSet::GenWheels(string path)
 {
-	unsigned char temp[256];
-	int i;
+	byte temp[256];
 	Wheel buildwheel;
-	FILE *file;
-	file = fopen(path.c_str(),"wb");
+	ofstream file(path.c_str(),ofstream::binary);
 	printf("\n");
-	for(i=0; i<TOTWHEELS; i++){
-		printf("\rGenerating Wheel %i of %i (%.2f)",i,TOTWHEELS,100.0*i/TOTWHEELS);
+	for(int i=0; i<TOTWHEELS; i++){
+		printf("\rGenerating Wheel %i of %i (%.2f) \r",i,TOTWHEELS,100.0*i/TOTWHEELS);
 		buildwheel.GenWheel();
 		buildwheel.getWheel(temp);
-		fwrite(temp, Wheel::WHEELSIZE, 1, file);
+		file.write((char*)temp, Wheel::WHEELSIZE);
 	}
-	printf("\r%.2f",100.0*i/TOTWHEELS);
-	backboard->GenWheel();
-	backboard->getWheel(temp);
-	fwrite(temp, Wheel::WHEELSIZE, 1, file);
-	fclose(file);
+	printf("\rGenerating Wheel %i of %i (%.2f) \r",TOTWHEELS,TOTWHEELS,100.0);
+	
+	backboard.GenWheel();
+	backboard.getWheel(temp);
+	file.write((char*)temp, Wheel::WHEELSIZE);
+	printf("\rGenerating Wheel %i of %i (%.2f) complete. \n",TOTWHEELS,TOTWHEELS,100.0);
 }
 
 
@@ -106,21 +106,24 @@ void WheelSet::GenKey(string path)
 {
 	std::ofstream file;
 	Random rand;
-	unsigned char key[256];
+	vector<byte> key;
 
-	printf("Generating key...\n");
-	rand.ch(key,rand.DUP,TOTWHEELS);
-	rand.ch(wheelorder,rand.NODUP,TOTWHEELS);
+	cout << "Generating key...\r";
+	for(auto i = TOTWHEELS-1; i >= 0; i--)	{
+		wheelorder.push_back((byte)i);
+		key.push_back((byte)random()%TOTWHEELS);
+	}
+	std::random_shuffle(wheelorder.begin(), wheelorder.end());
 
-	printf("Writing key to file...\n");
+	cout << "Writing key to file...\r";
 	file.open(path.c_str(),std::ios::out | std::ios::binary);
-	file.write((char *)key,TOTWHEELS);
-	file.write((char *)wheelorder,TOTWHEELS);
+	file.write((char *)&key[0],TOTWHEELS);
+	file.write((char *)&wheelorder[0],TOTWHEELS);
 	file.close();
 
-	printf("Key Written.\n");
+	cout << "Key Written: "<<path<<" \n";
 }
-/*** GenKey *********************************************************/
+
 
 /*** crypt **********************************************************/
 unsigned char WheelSet::Crypt(unsigned char value,int decrypt)
@@ -133,10 +136,10 @@ unsigned char WheelSet::Crypt(unsigned char value,int decrypt)
 	}
 	//bounces it off the backboard
 	if(decrypt){
-		value = backboard->goingOut(value);
+		value = backboard.goingOut(value);
 	}
 	else{
-		value = backboard->goingIn(value);
+		value = backboard.goingIn(value);
 	}
 	//brings the value back through the wheels
 	for(i=TOTWHEELS-1; i>=0; i--){

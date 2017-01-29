@@ -33,8 +33,6 @@ EnigmaExe::EnigmaExe(int argcount, char* arguments[])
  */
 EnigmaExe::~EnigmaExe()
 {
-	/* End curses mode		  */
-	endwin();
 }
 
 /**
@@ -165,5 +163,7 @@ void EnigmaExe::DisplayMenu()
 				break;
 		}
 	}
+	/* End curses mode		  */
+	endwin();
 }
 

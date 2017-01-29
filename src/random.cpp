@@ -1,12 +1,14 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#include <algorithm>
 
 #include "enigma.h"
 
 //const unsigned char Random::NODUP = 0;
 //const unsigned char Random::DUP = 1;
 bool Random::randomized = false;
+
 
 Random::Random()
 {
@@ -28,7 +30,7 @@ void Random::ch(unsigned char *list, unsigned char rep, unsigned long size)
 		for(i=0; i<size; i++){
 			list[i] = (unsigned char)i;
 		}
-			for(i=size-1; i>0; i--){
+		for(i=size-1; i>0; i--){
 			r=random()%i;
 			temp=list[i];
 			list[i]=list[r];
@@ -41,3 +43,7 @@ void Random::ch(unsigned char *list, unsigned char rep, unsigned long size)
 		}
 	}
 }
+
+
+
+

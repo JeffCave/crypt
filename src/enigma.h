@@ -17,6 +17,7 @@ class Random{
 		static const unsigned char DUP = 1;
 		Random();
 		void ch(unsigned char *, unsigned char rep=1, unsigned long arraysize=1);
+		void ch(vector<byte>, bool duplicates = false, int arraysize=1);
 };
 
 
@@ -43,9 +44,9 @@ class Wheel{
 /*** WheelSet *******************************************************/
 class WheelSet{
 	private:
-		Wheel* wheels;
-		unsigned char * wheelorder;
-		Wheel *backboard;
+		vector<Wheel> wheels;
+		vector<byte> wheelorder;
+		Wheel backboard;
 	public:
 		static const int TOTWHEELS;
 		WheelSet();
